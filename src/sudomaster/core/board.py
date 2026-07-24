@@ -19,29 +19,59 @@ class Board:
             return False
 
 
-        cell_row = row // 3
-        cell_col = col // 3
+        box_row_index = (row // 3) * 3
+        box_col_index = (col // 3) * 3
 
-        for r in range(cell_row, cell_row + 3):
-            if num in self.grid[r][cell_col:cell_col + 3]:
+        for r in range(box_row_index, box_row_index + 3):
+            if num in self.grid[r][box_col_index:box_col_index + 3]:
                 return False
 
         return True
 
     def get_candidates(self, row: int, col:int) -> set[int]:
         candidates = set()
-        for num in range(1, 9):
+
+        if self.grid[row][col] != 0:
+            return candidates
+        
+        for num in range(1, 10):
             if self.is_valid_move(row=row, col=col, num=num):
                 candidates.add(num)
         return candidates
 
     def is_solved(self) -> bool:
-        for row in self.rows:
-            for col in self.cols:
-                num = self.grid[row][col]
-                if num == 0 or not self.is_valid_move(row=row, col=col, num=num):
-                    return False
+        #Check 0's:
+        for row in self.grid:
+            if 0 in row:
+                return False
+        
+        # Check rows
+        for row in self.grid:
+            nums = [num for num in row if num != 0]
+            if len(set(nums)) != len(nums):
+                return False
+
+        # Check cols
+        for col_index in range(self.cols):
+            col = [r[col_index] for r in self.grid]
+            nums = [num for num in col if num != 0]
+            if len(set(nums)) != len(nums):
+                return False
+
+        # Check boxes
+        for box_row in range(0, 9, 3):
+            for box_col in range(0, 9, 3):
+                box = [
+                    self.grid[r][c]
+                    for r in range(box_row, box_row + 3)
+                    for c in range(box_col, box_col + 3)
+                ]
+                nums = [num for num in box if num != 0]
+                if len(set(nums)) != len(nums):
+                    return False 
+        
         return True
 
     def clone(self) -> Board:
-        return Board(rows=self.rows, cols=self.cols, grid=self.grid)
+        new_grid = [row[:] for row in self.grid]
+        return Board(rows=self.rows, cols=self.cols, grid=new_grid)
