@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Self
 
 @dataclass
 class Board:
@@ -78,7 +79,7 @@ class Board:
         
         return True
 
-    def clone(self) -> Board:
+    def clone(self) -> Self:
         new_grid = [row[:] for row in self.grid]
         return Board(rows=self.rows, cols=self.cols, grid=new_grid)
 
