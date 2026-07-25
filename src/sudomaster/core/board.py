@@ -10,6 +10,12 @@ class Board:
         if not self.grid:
             self.grid = [[0] * self.cols for _ in range(self.rows)]
 
+    def set(self, row: int, col:int, num:int) -> None:
+        self.grid[row][col] = num
+
+    def get(self, row: int, col:int) -> int:
+        return self.grid[row][col]
+
     def is_valid_move(self, row: int, col:int, num: int) -> bool:
         if num in self.grid[row]:
             return False
@@ -75,3 +81,18 @@ class Board:
     def clone(self) -> Board:
         new_grid = [row[:] for row in self.grid]
         return Board(rows=self.rows, cols=self.cols, grid=new_grid)
+
+def parse_board_string(board_string: str) -> Board:
+    formatted_board_string = board_string.replace(".", "0")
+    
+    if len(board_string) != 81:
+        raise ValueError("The length of the string must be 81 characters long.")
+    if not formatted_board_string.isdigit():
+        raise ValueError("The string must contain only the character '.' and numbers.")
+    
+    grid = []
+    for board_slice in range(0, 81, 9):
+        grid.append([int(value) for value in formatted_board_string[board_slice:board_slice+9]])
+
+    board = Board(grid=grid)
+    return board
