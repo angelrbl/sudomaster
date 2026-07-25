@@ -1,5 +1,5 @@
 import pytest
-from sudomaster.core.board import Board, parse_board_string
+from sudomaster.core import Board, parse_board_string
 
 def test_board_initialization():
     target_board = Board(rows=9, cols=9, grid=[[0]*9 for _ in range(9)])
