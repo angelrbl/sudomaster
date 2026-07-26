@@ -45,11 +45,17 @@ class Board:
                 candidates.add(num)
         return candidates
 
+    def find_empty_cell(self) -> tuple[int, int] | None:
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if self.get(row=row, col=col) == 0:
+                    return row, col
+        return None
+
     def is_solved(self) -> bool:
         #Check 0's:
-        for row in self.grid:
-            if 0 in row:
-                return False
+        if self.find_empty_cell() is not None:
+            return False
         
         # Check rows
         for row in self.grid:

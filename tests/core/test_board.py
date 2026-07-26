@@ -69,6 +69,18 @@ def test_get_candidates_occupied_cell():
 
     assert board.get_candidates(row=0, col=0) == set()
 
+def test_find_empty_cell_true():
+    board_string = ".87654321246173985351928746128537694634892157795461832519286473472319568863745219"
+    board = parse_board_string(board_string=board_string)
+
+    assert board.find_empty_cell() == (0, 0)
+
+def test_find_empty_cell_false():
+    board_string = "187654321246173985351928746128537694634892157795461832519286473472319568863745219"
+    board = parse_board_string(board_string=board_string)
+    
+    assert board.find_empty_cell() == None
+
 def test_is_solved_true():
     board_string = "987654321246173985351928746128537694634892157795461832519286473472319568863745219"
     board = parse_board_string(board_string=board_string)
