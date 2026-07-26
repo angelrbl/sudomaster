@@ -4,10 +4,10 @@ from sudomaster.core import Board
 
 @dataclass
 class SolverResult:
-    success: bool
-    board: Board | None
-    execution_time: float | None
-    backtracks: int | None
+    success: bool | None = None
+    board: Board | None = None
+    execution_time: float | None = None
+    backtracks: int | None = None
 
 
 class BaseSolver(ABC):
