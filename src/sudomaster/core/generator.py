@@ -2,6 +2,7 @@ from enum import Enum
 import random
 from dataclasses import dataclass
 from sudomaster.core import Board
+from sudomaster.solvers import BacktrackingSolver
 
 class Difficulty(Enum):
     EASY = 26
@@ -15,8 +16,9 @@ class GeneratedSudoku:
     difficulty: Difficulty
 
 class SudokuGenerator:
-    def __init__(self, seed: int | None = None):
+    def __init__(self, seed: int | None = None, solver: BacktrackingSolver | None = None):
         self.rng = random.Random(seed)
+        self.solver = solver or BacktrackingSolver()
 
     def generate(self, difficulty: Difficulty = Difficulty.EASY) -> GeneratedSudoku:
         #INITIALIZE EMPTY BOARD AND FILL IT RANDOMLY
@@ -70,31 +72,10 @@ class SudokuGenerator:
 
             if num != 0:
                 board.set(row=row, col=col, num=0)
-                if self._count_solutions(board=board) != 1:
+                if self.solver.count_solutions(board=board) != 1:
                     board.set(row=row, col=col, num=num)
                 else:
                     holes += 1
-
-
-    def _count_solutions(self, board: Board, limit: int = 2) -> int:
-        empty_cell = board.find_empty_cell()
-        
-        if empty_cell is None:
-            return 1
-
-        row, col = empty_cell
-        solutions = 0
-
-        candidates = board.get_candidates(row=row, col=col)
-        for candidate in candidates:
-            if board.is_valid_move(row=row, col=col, num=candidate):
-                board.set(row=row, col=col, num=candidate)
-                solutions += self._count_solutions(board=board, limit=limit)
-                board.set(row=row, col=col, num=0)
-                if solutions >= limit:
-                    break
-
-        return solutions
 
 if __name__ == "__main__":
     generator = SudokuGenerator()

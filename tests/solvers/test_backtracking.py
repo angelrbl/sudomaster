@@ -1,9 +1,21 @@
 import pytest
-from sudomaster import parse_board_string, BacktrackingSolver
+from sudomaster import parse_board_string, BacktrackingSolver, SolverResult, Board
 
 @pytest.fixture
 def solver():
     return BacktrackingSolver()
+
+def test_solver_returns_valid_dataclass_structure(solver):
+    board_string = "530070000600195000098000060800060003400803001700020006060000280000419005000080079"
+    board = parse_board_string(board_string=board_string)
+    
+    result = solver.solve(board=board)
+
+    assert isinstance(result, SolverResult)
+    assert isinstance(result.success, bool)
+    assert isinstance(result.board, Board)
+    assert isinstance(result.backtracks, int)
+    assert isinstance(result.execution_time, float)
 
 def test_solve_easy_sudoku(solver):
     board_string = "530070000600195000098000060800060003400803001700020006060000280000419005000080079"
