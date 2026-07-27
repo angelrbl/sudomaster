@@ -1,4 +1,4 @@
-from sudomaster.solvers.base import BaseSolver, SolverResult
+from sudomaster.solvers.base import SudokuSolver, SolverResult
 from sudomaster.solvers.backtracking import BacktrackingSolver
 
-__all__ = ["BaseSolver", "SolverResult", "BacktrackingSolver"]
+__all__ = ["SudokuSolver", "SolverResult", "BacktrackingSolver"]

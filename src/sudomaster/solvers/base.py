@@ -10,7 +10,7 @@ class SolverResult:
     backtracks: int | None = None
 
 
-class BaseSolver(ABC):
+class SudokuSolver(ABC):
     @abstractmethod
     def solve(self, board: Board) -> SolverResult:
         pass

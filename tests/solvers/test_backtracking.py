@@ -1,6 +1,5 @@
 import pytest
-from sudomaster.core import Board, parse_board_string
-from sudomaster.solvers import BacktrackingSolver
+from sudomaster import parse_board_string, BacktrackingSolver
 
 @pytest.fixture
 def solver():
