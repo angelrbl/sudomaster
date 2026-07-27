@@ -1,8 +1,8 @@
-from sudomaster.solvers import BaseSolver, SolverResult
+from sudomaster.solvers import SudokuSolver, SolverResult
 from sudomaster.core import Board
 import time
 
-class BacktrackingSolver(BaseSolver):
+class BacktrackingSolver(SudokuSolver):
     def __init__(self):
         self.backtracks = 0
 
