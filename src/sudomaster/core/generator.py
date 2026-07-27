@@ -59,9 +59,12 @@ class SudokuGenerator:
     def _dig_holes(self, difficulty: Difficulty, board: Board) -> bool:
         holes = 0
 
-        while holes < difficulty.value:
-            row = self.rng.randrange(0, board.rows)
-            col = self.rng.randrange(0, board.cols)
+        positions = [(r, c) for r in range(board.rows) for c in range(board.cols)]
+        self.rng.shuffle(positions)
+
+        for row, col in positions:
+            if holes >= difficulty.value:
+                break
 
             num = board.get(row=row, col=col)
 
