@@ -1,8 +1,8 @@
-from sudomaster.solvers import BaseSolver, SolverResult
+from sudomaster.solvers import SudokuSolver, SolverResult
 from sudomaster.core import Board
 import time
 
-class BacktrackingSolver(BaseSolver):
+class BacktrackingSolver(SudokuSolver):
     def __init__(self):
         self.backtracks = 0
 
@@ -22,7 +22,7 @@ class BacktrackingSolver(BaseSolver):
             backtracks=self.backtracks
         )
 
-    def _solve_backtracking(self, board: Board):
+    def _solve_backtracking(self, board: Board) -> bool:
         empty_cell = board.find_empty_cell()
         if empty_cell is None:
             return True
@@ -37,3 +37,23 @@ class BacktrackingSolver(BaseSolver):
                 self.backtracks += 1
 
         return False
+
+    def count_solutions(self, board: Board, limit: int = 2) -> int:
+        empty_cell = board.find_empty_cell()
+        
+        if empty_cell is None:
+            return 1
+
+        row, col = empty_cell
+        solutions = 0
+
+        candidates = board.get_candidates(row=row, col=col)
+        for candidate in candidates:
+            if board.is_valid_move(row=row, col=col, num=candidate):
+                board.set(row=row, col=col, num=candidate)
+                solutions += self._count_solutions(board=board, limit=limit)
+                board.set(row=row, col=col, num=0)
+                if solutions >= limit:
+                    break
+
+        return solutions
