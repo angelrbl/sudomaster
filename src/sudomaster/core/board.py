@@ -103,3 +103,12 @@ def parse_board_string(board_string: str) -> Board:
 
     board = Board(grid=grid)
     return board
+
+def board_to_string(board: Board) -> str:
+    board_string = ""
+
+    for row in board.grid:
+        board_string += "".join(map(str, row))
+
+    formatted_board_string = board_string.replace("0", ".")
+    return formatted_board_string
