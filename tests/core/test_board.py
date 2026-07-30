@@ -26,13 +26,13 @@ def test_parse_board_string_invalid_length():
     board_string = "5.................676767............................................................001"
 
     with pytest.raises(ValueError):
-        assert parse_board_string(board_string=board_string) is not None
+        parse_board_string(board_string=board_string) is not None
 
 def test_parse_board_string_invalid_value():
     board_string = "5.................vivaespaña..................................................001"
     
     with pytest.raises(ValueError):
-        assert parse_board_string(board_string=board_string) is not None
+        parse_board_string(board_string=board_string) is not None
     
 
 def test_is_valid_move_success():
