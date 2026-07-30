@@ -54,7 +54,10 @@ def get_loader(filepath: str | Path) -> DataLoader:
     return loader_class()
 
 def get_serializer(obj: Any) -> Serializer:
-    obj_type = type(obj)
+    if isinstance(obj, type):
+        obj_type = obj
+    else:
+        obj_type = type(obj)
 
     serializer_class = _SERIALIZERS.get(obj_type)
     if not serializer_class:
