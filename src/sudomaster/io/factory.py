@@ -53,14 +53,14 @@ def get_loader(filepath: str | Path) -> DataLoader:
 
     return loader_class()
 
-def get_serializer(obj: Any) -> Serializer:
-    if isinstance(obj, type):
-        obj_type = obj
+def get_serializer(target: Any) -> Serializer:
+    if isinstance(target, type):
+        target_type = target
     else:
-        obj_type = type(obj)
+        target_type = type(target)
 
-    serializer_class = _SERIALIZERS.get(obj_type)
+    serializer_class = _SERIALIZERS.get(target_type)
     if not serializer_class:
-        raise UnsupportedObjectTypeError(f"There is not a serializer for: {obj_type.__name__}")
+        raise UnsupportedObjectTypeError(f"There is not a serializer for: {target_type.__name__}")
 
     return serializer_class()
