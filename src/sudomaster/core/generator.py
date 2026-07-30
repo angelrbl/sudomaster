@@ -16,7 +16,7 @@ class GeneratedSudoku:
     difficulty: Difficulty
 
 class SudokuGenerator:
-    def __init__(self, seed: int | None = None, solver: BacktrackingSolver | None = None):
+    def __init__(self, seed: int | None = None, solver: BacktrackingSolver | None = None) -> None:
         self.rng = random.Random(seed)
         self.solver = solver or BacktrackingSolver()
 
