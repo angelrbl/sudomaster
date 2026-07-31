@@ -6,4 +6,4 @@ build/
 *.egg-info/
 .vscode/
 #SUDOKU RESULTS
-./results
+results

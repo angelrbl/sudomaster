@@ -1,6 +1,7 @@
 from rich.text import Text
 from rich.table import Table
 from rich.console import Console
+from rich.columns import Columns
 from rich import box
 from sudomaster.core import Board
 
@@ -33,6 +34,17 @@ def print_board(board: Board, title: str = "Sudoku", console: Console | None = N
     table = build_board_table(board=board, title=title)
 
     console.print(table)
+
+def print_boards(boards: list[Board], titles: list[str] | None = None, console: Console | None = None) -> None:
+    if console is None:
+        console = Console()
+
+    tables = []
+    for i, board in enumerate(boards):
+        table_title = titles[i] if titles and i < len(titles) else None
+        tables.append(build_board_table(board=board, title=table_title))
+
+    console.print(Columns(tables, padding=(1, 2)))
 
 if __name__ == "__main__":
     from sudomaster.core import SudokuGenerator
