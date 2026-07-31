@@ -3,7 +3,7 @@ from sudomaster.core import Board
 import time
 
 class BacktrackingSolver(SudokuSolver):
-    def __init__(self):
+    def __init__(self) -> None:
         self.backtracks = 0
 
     def solve(self, board: Board) -> SolverResult:
