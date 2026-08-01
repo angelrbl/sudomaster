@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from sudomaster.core import Board
 
-@dataclass
+@dataclass(frozen=True)
 class SolverResult:
     success: bool | None = None
     board: Board | None = None
