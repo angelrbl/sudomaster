@@ -8,6 +8,8 @@ class Difficulty(Enum):
     EASY = 26
     MEDIUM = 32
     HARD = 40
+    MASTER = 48
+    EXTREME = 56
 
 @dataclass(frozen=True)
 class GeneratedSudoku:

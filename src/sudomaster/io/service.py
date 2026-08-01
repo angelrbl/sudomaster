@@ -1,6 +1,6 @@
 from typing import Any
 from pathlib import Path
-import time
+from datetime import datetime
 
 from sudomaster.io import get_exporter, get_loader, get_serializer
 from sudomaster.core import Board, GeneratedSudoku
@@ -28,20 +28,20 @@ def load_data(filepath: str | Path, target_class: type | None = None) -> Any:
     serializer = get_serializer(target=target_class)
     return serializer.deserialize(data=data)
 
-def resolve_output_path(output_arg: str | None, difficulty_or_solved: str, ext: str, seed: int | None = None) -> Path | None:
+def resolve_output_path(output_arg: str | None, ext: str, default_name: str, default_dir: str | Path = "./results/", seed: int | None = None) -> Path | None:
     if not output_arg:
         return 
 
-    identifier = f"seed_{seed}" if seed is not None else f"time_{int(time.time())}"
-
-    auto_filename = f"sudoku_{difficulty_or_solved}_{identifier}.{ext}"
-    default_dir = Path("./results")
-
+    if seed:
+        default_name = f"{default_name}_{seed}.{ext}"
+    else:
+        default_name = f"{default_name}_{datetime.now().strftime("%Y-%m-%d_%H%M%S")}.{ext}"
+    
     if output_arg == "AUTO":
-        return default_dir / auto_filename
+        return default_dir / default_name
 
     path = Path(output_arg)
-    if not path.suffix:
-        return path / auto_filename
+    if path.is_dir():
+        return path / default_name
 
     return path
