@@ -4,20 +4,24 @@ from sudomaster.core import Difficulty, SudokuGenerator
 
 from dataclasses import asdict
 import pandas as pd
+import random
 
 def run_benchmark(
     solver_name: str,
     solver: SudokuSolver,
-    difficulty: Difficulty,
-    samples:int = 50 
+    difficulty: Difficulty | None,
+    samples:int | None = None 
 ) -> list[BenchmarkResult]:
+
+    if samples is None:
+        samples = 50 
 
     generator = SudokuGenerator()
     results = []
 
     for sample in range(samples):
 
-        generated_sudoku = generator.generate(difficulty=difficulty)
+        generated_sudoku = generator.generate(difficulty=(difficulty if difficulty else random.choice(list(Difficulty))))
         result = solver.solve(generated_sudoku.sudoku)
 
         results.append(
@@ -34,4 +38,24 @@ def run_benchmark(
     return results
 
 def benchmark_to_dataframe(results: list[BenchmarkResult]) -> pd.DataFrame:
-    return pd.DataFrame([asdict(BenchmarkResult) for r in results])
+    data = []
+    for r in results:
+        row = asdict(r)
+        row["difficulty"] = str(r.difficulty.name)
+        data.append(row)
+
+    return pd.DataFrame(data)
+
+def get_summary_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame()
+
+    summary_df = df.groupby("difficulty").agg(
+        samples=("sample_id", "count"),
+        avg_time_s=("execution_time", "mean"),
+        max_time_s=("execution_time", "max"),
+        avg_backtracks=("backtracks", "mean"),
+        success_pct=("success", lambda s: s.mean() * 100)
+    ).round(4)
+
+    return summary_df
