@@ -5,11 +5,13 @@ from sudomaster.core import Difficulty, SudokuGenerator
 from dataclasses import asdict
 import pandas as pd
 import random
+from typing import Callable
 
 def run_benchmark(
     solver_name: str,
     solver: SudokuSolver,
     difficulty: Difficulty | None,
+    on_progress: Callable[[], None] | None = None,
     samples:int | None = None 
 ) -> list[BenchmarkResult]:
 
@@ -20,6 +22,9 @@ def run_benchmark(
     results = []
 
     for sample in range(samples):
+
+        if on_progress:
+            on_progress()
 
         generated_sudoku = generator.generate(difficulty=(difficulty if difficulty else random.choice(list(Difficulty))))
         result = solver.solve(generated_sudoku.sudoku)

@@ -140,12 +140,19 @@ def benchmark(solver, difficulty, samples, output, chart):
         solver = Prompt.ask(prompt="Select which solver will solve the sudoku", choices=["backtracking"], case_sensitive=False)
     solver_instance = SOLVER_MAP[solver.lower()]()
 
-    benchmark_results = run_benchmark(
-        solver_name=solver,
-        solver=solver_instance,
-        difficulty=(Difficulty[difficulty.upper()] if difficulty != "all" else None),
-        samples=samples
-    )
+    with click.progressbar(
+        length=samples,
+        label=f"Running {samples} tests ({difficulty})..."
+    ) as bar:
+        
+        benchmark_results = run_benchmark(
+            solver_name=solver,
+            solver=solver_instance,
+            difficulty=(Difficulty[difficulty.upper()] if difficulty != "all" else None),
+            samples=samples,
+            on_progress=lambda: bar.update(1)
+        )
+
     results_df = benchmark_to_dataframe(benchmark_results)
 
     if output:
