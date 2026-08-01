@@ -3,7 +3,7 @@ from sudomaster.solvers import SudokuSolver
 from sudomaster.core import Difficulty, SudokuGenerator
 
 from dataclasses import asdict
-import csv
+import pandas as pd
 
 def run_benchmark(
     solver_name: str,
@@ -32,3 +32,6 @@ def run_benchmark(
         )
 
     return results
+
+def benchmark_to_dataframe(results: list[BenchmarkResult]) -> pd.DataFrame:
+    return pd.DataFrame([asdict(BenchmarkResult) for r in results])
