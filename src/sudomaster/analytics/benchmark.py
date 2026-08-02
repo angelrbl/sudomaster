@@ -43,13 +43,27 @@ def run_benchmark(
     return results
 
 def benchmark_to_dataframe(results: list[BenchmarkResult]) -> pd.DataFrame:
+    if not results:
+        return pd.DataFrame()
+
+    
     data = []
+    DIFFICULTY_ORDER = ["easy", "medium", "hard", "expert", "master"]
+
     for r in results:
         row = asdict(r)
-        row["difficulty"] = str(r.difficulty.name)
+        row["difficulty"] = str(r.difficulty.name).lower()
         data.append(row)
 
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+
+    df["difficulty"] = pd.Categorical(
+    df["difficulty"], 
+    categories=DIFFICULTY_ORDER, 
+    ordered=True
+    )
+
+    return df
 
 def get_summary_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     if df.empty:
