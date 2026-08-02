@@ -1,5 +1,5 @@
 import click
-from sudomaster.ui.crud import generate, solve, benchmark
+from sudomaster.ui.crud import generate, solve, benchmark, plot
 from sudomaster.ui.welcome import render_welcome_screen
 
 @click.group(invoke_without_command=True)
@@ -11,3 +11,4 @@ def cli(ctx):
 cli.add_command(generate)
 cli.add_command(solve)
 cli.add_command(benchmark)
+cli.add_command(plot)

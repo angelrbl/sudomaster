@@ -65,13 +65,24 @@ class SolverResultSerializer(Serializer):
         )      
 
 class DataFrameSerializer(Serializer):
+    def __init__(self):
+        self.DIFFICULTY_ORDER = ["easy", "medium", "hard", "expert", "master"]
+
     def serialize(self, obj: pd.DataFrame) -> list[dict[str, Any]]:
         return obj.to_dict(orient="records")
 
     def deserialize(self, data: list[dict[str, Any]]) -> pd.DataFrame:
         df = pd.DataFrame(data)
-        
+
+        if "difficulty" in df.columns:
+            df["difficulty"] = pd.Categorical(
+                df["difficulty"].astype(str).str.lower(),
+                categories=self.DIFFICULTY_ORDER,
+                ordered=True
+            )
+
         for col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="ignore")
+            if col != "difficulty":
+                df[col] = pd.to_numeric(df[col], errors="coerce")
 
         return df

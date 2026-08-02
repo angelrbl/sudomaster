@@ -1,12 +1,13 @@
 import click
 from pathlib import Path
 from rich.prompt import Prompt
+import pandas as pd
 
 from sudomaster.core import SudokuGenerator, Difficulty, board_to_string, parse_board_string, Board, GeneratedSudoku
 from sudomaster.solvers import SolverResult, BacktrackingSolver
 from sudomaster.io import load_data, save_data, resolve_output_path, UnsupportedFileFormatException
 from sudomaster.ui import print_board, print_boards
-from sudomaster.ui.charts import render_benchmark_charts
+from sudomaster.ui.charts import render_benchmark_charts, plot_scatter_backtracks_vs_time, plot_time_distribution
 from sudomaster.analytics import run_benchmark, benchmark_to_dataframe, get_summary_dataframe
 
 SOLVER_MAP = {
@@ -25,7 +26,7 @@ SOLVER_MAP = {
 @click.option("--raw", "-r", is_flag=True, help="Return sudoku as string.")
 @click.option("--seed", type=int, help="Specify the generator's seed.")
 @click.option("--solution", "-s", is_flag=True, help="Return/export sudoku's solution.")
-def generate(difficulty, output, raw, seed, solution):
+def generate(difficulty: str, output: Path | str, raw: bool, seed: int | None, solution: bool) -> None:
     """Generates a new Sudoku with the selected difficulty"""
 
     if not difficulty:
@@ -67,7 +68,7 @@ def generate(difficulty, output, raw, seed, solution):
     help="Output path (i.e. ./results/solved_sudoku_1.json)")
 @click.option("--raw", "-r", is_flag=True, help="Return sudoku as string.")
 @click.option("--solver", "-s", type=click.Choice(["backtracking"], case_sensitive=False), help="Specify the solver that solves the sudoku.")
-def solve(file, output, raw, solver):
+def solve(file: Path | str, output: Path | str, raw: bool, solver: str) -> None:
     """Solves a given Sudoku with the specified solver."""
 
     if not solver:
@@ -134,7 +135,7 @@ def solve(file, output, raw, solver):
     flag_value="AUTO",
     help="Output path (i.e. ./results/benchmarks/benchmark_backtracking_medium_1.csv)")
 @click.option("--chart", "-c", is_flag=True, help="Print benchmark's charts")
-def benchmark(solver, difficulty, samples, output, chart):
+def benchmark(solver: str, difficulty: str, samples: int, output: Path | str, chart: bool) -> None:
     """Runs a benchmark from a specific solver and difficulty."""
 
     if not difficulty:
@@ -167,7 +168,7 @@ def benchmark(solver, difficulty, samples, output, chart):
         final_path = resolve_output_path(output_arg=output, ext=ext, default_dir=Path("./results/benchmarks/"), default_name=f"benchmark_solver_{difficulty}")
         try:
             save_data(obj=results_df, filepath=final_path)
-            click.echo(f"\Benchmark saved successfully at: {final_path}")
+            click.echo(f"\nBenchmark saved successfully at: {final_path}")
         except UnsupportedFileFormatException as e:
             raise click.ClickException(str(e))
 
@@ -176,3 +177,35 @@ def benchmark(solver, difficulty, samples, output, chart):
 
     if chart:
         render_benchmark_charts(df=results_df)
+
+@click.command()
+@click.argument("filepath", type=click.Path(exists=True, dir_okay=False, path_type=str))
+@click.option(
+    "--type",
+    "-t",
+    type=click.Choice(["summary", "scatter", "dist"], case_sensitive=False),
+    help="Type of chart: 'summary' (bars), 'scatter' (points), or 'dist' (histogram).",
+)
+def plot(filepath: str | Path, type: str | None) -> None:
+    """Visualize benchmark metrics from a saved CSV file."""
+
+    if not type:
+        type = Prompt.ask(prompt="Select a metric to visualize", choices=["summary", "scatter", "dist"], case_sensitive=False)
+
+    try:
+        df = load_data(filepath=filepath, target_class=pd.DataFrame)
+
+        if df.empty:
+            click.echo("WARNING: The CSV contains no data.")
+
+        match type:
+            case "summary":
+                render_benchmark_charts(df=df)
+            case "scatter":
+                plot_scatter_backtracks_vs_time(df=df)
+            case "dist":
+                plot_time_distribution(df=df)
+    except Exception as e:
+        from rich.console import Console
+        Console().print_exception(show_locals=True)
+        raise click.ClickException(f"Error loading benchmark file: '{e}'")
