@@ -1,10 +1,10 @@
-from typing import Any, TypeVar
+from typing import Any
 from pathlib import Path
 from datetime import datetime
 
 from sudomaster.io import get_exporter, get_loader, get_serializer
-
-T = TypeVar("T")
+from sudomaster.core import Board, GeneratedSudoku
+from sudomaster.solvers import SolverResult
 
 def save_data(obj: Any, filepath: str | Path) -> None:
     serializer = get_serializer(target=obj)
@@ -13,16 +13,26 @@ def save_data(obj: Any, filepath: str | Path) -> None:
     exporter = get_exporter(filepath=filepath)
     exporter.export(data=data, filepath=filepath)
 
-def load_data(filepath: str | Path, target_class: type[T]) -> T:
+def load_data(filepath: str | Path, target_class: type | None = None) -> Any:
     loader = get_loader(filepath=filepath)
     data = loader.load(filepath=filepath)
+
+    if target_class is None:
+        if "sudoku" in data and "solution" in data:
+            target_class = GeneratedSudoku
+        elif "success" in data and "execution_time" in data:
+            target_class = SolverResult
+        else:
+            target_class = Board
 
     serializer = get_serializer(target=target_class)
     return serializer.deserialize(data=data)
 
-def resolve_output_path(output_arg: str | None, ext: str, default_name: str, default_dir: str | Path = "./results/", seed: int | None = None) -> Path | None:
+def resolve_output_path(output_arg: str | None, ext: str, default_name: str, default_dir: str | Path = Path("./results/"), seed: int | None = None) -> Path | None:
     if not output_arg:
         return 
+
+    ext = ext.lstrip(".").lower()
 
     if seed:
         default_name = f"{default_name}_{seed}.{ext}"
@@ -33,7 +43,7 @@ def resolve_output_path(output_arg: str | None, ext: str, default_name: str, def
         return default_dir / default_name
 
     path = Path(output_arg)
-    if path.is_dir():
+    if not path.suffix:
         return path / default_name
 
     return path

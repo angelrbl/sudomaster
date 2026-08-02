@@ -5,3 +5,5 @@ build/
 .pytest_cache/
 *.egg-info/
 .vscode/
+#SUDOKU RESULTS
+results

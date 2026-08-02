@@ -1,4 +1,5 @@
 from typing import Any
+import pandas as pd
 from sudomaster.core import Difficulty, GeneratedSudoku, Board, parse_board_string, board_to_string
 from sudomaster.solvers import SolverResult
 from sudomaster.io import Serializer
@@ -62,3 +63,15 @@ class SolverResultSerializer(Serializer):
             backtracks=backtracks,
             execution_time=execution_time
         )      
+
+class DataFrameSerializer(Serializer):
+    def serialize(self, obj: pd.DataFrame) -> list[dict[str, Any]]:
+        return obj.to_dict(orient="records")
+
+    def deserialize(self, data: list[dict[str, Any]]) -> pd.DataFrame:
+        df = pd.DataFrame(data)
+        
+        for col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="ignore")
+
+        return df

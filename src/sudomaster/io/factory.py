@@ -1,16 +1,18 @@
 from pathlib import Path
 from typing import Any
+import pandas as pd
 
 from sudomaster.core import Board, GeneratedSudoku
 from sudomaster.solvers import SolverResult
 
 from sudomaster.io import Exporter, DataLoader, Serializer
-from sudomaster.io.exporters import JSONExporter
+from sudomaster.io.exporters import JSONExporter, CSVExporter
 from sudomaster.io.loaders import JSONDataLoader
 from sudomaster.io.serializers import (
     BoardSerializer,
     GeneratedSudokuSerializer,
-    SolverResultSerializer    
+    SolverResultSerializer,
+    DataFrameSerializer
 )
 
 class UnsupportedFileFormatException(Exception):
@@ -22,7 +24,8 @@ class UnsupportedObjectTypeError(Exception):
     pass
 
 _EXPORTERS: dict[str, type[Exporter]] = {
-    ".json": JSONExporter
+    ".json": JSONExporter,
+    ".csv": CSVExporter
 }
 
 _LOADERS: dict[str, type[DataLoader]] = {
@@ -32,7 +35,8 @@ _LOADERS: dict[str, type[DataLoader]] = {
 _SERIALIZERS: dict[type, type[Serializer]] = {
     Board: BoardSerializer,
     GeneratedSudoku: GeneratedSudokuSerializer,
-    SolverResult: SolverResultSerializer
+    SolverResult: SolverResultSerializer,
+    pd.DataFrame: DataFrameSerializer
 }
 
 def get_exporter(filepath: str | Path) -> Exporter:

@@ -6,10 +6,10 @@ class DataLoader(Protocol):
         ...
 
 class Serializer(Protocol):
-    def serialize(self, obj: Any) -> dict[str, Any]:
+    def serialize(self, obj: Any) -> dict[str, Any] | list[dict[str, Any]]:
         ...
 
-    def deserialize(self, data: dict[str, Any]) -> Any:
+    def deserialize(self, data: dict[str, Any] | list[dict[str, Any]]) -> Any:
         ...
 
 class Exporter(Protocol):
