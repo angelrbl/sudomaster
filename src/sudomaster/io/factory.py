@@ -7,7 +7,7 @@ from sudomaster.solvers import SolverResult
 
 from sudomaster.io import Exporter, DataLoader, Serializer
 from sudomaster.io.exporters import JSONExporter, CSVExporter
-from sudomaster.io.loaders import JSONDataLoader
+from sudomaster.io.loaders import JSONDataLoader, CSVDataLoader
 from sudomaster.io.serializers import (
     BoardSerializer,
     GeneratedSudokuSerializer,
@@ -29,7 +29,8 @@ _EXPORTERS: dict[str, type[Exporter]] = {
 }
 
 _LOADERS: dict[str, type[DataLoader]] = {
-    ".json": JSONDataLoader
+    ".json": JSONDataLoader,
+    ".csv": CSVDataLoader
 }
 
 _SERIALIZERS: dict[type, type[Serializer]] = {
