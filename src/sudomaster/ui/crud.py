@@ -6,6 +6,7 @@ from sudomaster.core import SudokuGenerator, Difficulty, board_to_string, parse_
 from sudomaster.solvers import SolverResult, BacktrackingSolver
 from sudomaster.io import load_data, save_data, resolve_output_path, UnsupportedFileFormatException
 from sudomaster.ui import print_board, print_boards
+from sudomaster.ui.charts import render_benchmark_charts
 from sudomaster.analytics import run_benchmark, benchmark_to_dataframe, get_summary_dataframe
 
 SOLVER_MAP = {
@@ -67,6 +68,8 @@ def generate(difficulty, output, raw, seed, solution):
 @click.option("--raw", "-r", is_flag=True, help="Return sudoku as string.")
 @click.option("--solver", "-s", type=click.Choice(["backtracking"], case_sensitive=False), help="Specify the solver that solves the sudoku.")
 def solve(file, output, raw, solver):
+    """Solves a given Sudoku with the specified solver."""
+
     if not solver:
         solver = Prompt.ask(prompt="Select which solver will solve the sudoku", choices=["backtracking"], case_sensitive=False)
 
@@ -132,7 +135,8 @@ def solve(file, output, raw, solver):
     help="Output path (i.e. ./results/benchmarks/benchmark_backtracking_medium_1.csv)")
 @click.option("--chart", "-c", is_flag=True, help="Print benchmark's charts")
 def benchmark(solver, difficulty, samples, output, chart):
-    """Runs a benchmark of sudokus of the selected difficulty, solved by the selected solver."""
+    """Runs a benchmark from a specific solver and difficulty."""
+
     if not difficulty:
         difficulty = Prompt.ask(prompt="Select the difficulty of your sudoku", choices=["easy", "medium", "hard", "expert", "master", "all"], case_sensitive=False)
 
@@ -167,4 +171,8 @@ def benchmark(solver, difficulty, samples, output, chart):
         except UnsupportedFileFormatException as e:
             raise click.ClickException(str(e))
 
+    click.echo("\n")
     click.echo(get_summary_dataframe(df=results_df))
+
+    if chart:
+        render_benchmark_charts(df=results_df)

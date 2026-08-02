@@ -2,3 +2,4 @@ pytest
 rich
 click
 pandas
+plotext
