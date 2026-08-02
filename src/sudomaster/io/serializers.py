@@ -1,5 +1,7 @@
 from typing import Any
 import pandas as pd
+import json
+import ast
 from sudomaster.core import Difficulty, GeneratedSudoku, Board, parse_board_string, board_to_string
 from sudomaster.solvers import SolverResult
 from sudomaster.io import Serializer
@@ -9,7 +11,12 @@ class BoardSerializer(Serializer):
         board_string = board_to_string(board=obj)
         return {"grid": board_string}
 
-    def deserialize(self, data: dict[str, str]) -> Board:
+    def deserialize(self, data: dict[str, str] | str) -> Board:
+        if isinstance(data, str):
+            try:
+                data = json.loads(data)
+            except json.JSONDecodeError:
+                data = ast.literal_eval(data)
         board_string = data.get("grid")
         return parse_board_string(board_string=board_string)
 

@@ -37,7 +37,7 @@ def generate(difficulty: str, output: Path | str, raw: bool, seed: int | None, s
 
     if output:
         if not Path(output).suffix:
-            ext = Prompt.ask(prompt="Select an exporting format for your sudoku", choices=["json", "txt"], case_sensitive=False)
+            ext = Prompt.ask(prompt="Select an exporting format for your sudoku", choices=["json", "csv", "txt"], case_sensitive=False)
         else:
             ext = Path(output).suffix.lstrip(".").lower()
         final_path = resolve_output_path(output_arg=output, ext=ext, default_name=f"sudoku_{difficulty}", seed=seed)
@@ -103,7 +103,7 @@ def solve(file: Path | str, output: Path | str, raw: bool, solver: str) -> None:
 
     if output:
             if not Path(output).suffix:
-                ext = Prompt.ask(prompt="Select an exporting format for your sudoku", choices=["json", "txt"], case_sensitive=False)
+                ext = Prompt.ask(prompt="Select an exporting format for your sudoku", choices=["json", "csv", "txt"], case_sensitive=False)
             else:
                 ext = Path(output).suffix.lstrip(".").lower()
             final_path = resolve_output_path(output_arg=output, ext=ext, default_name=f"solved_sudoku")

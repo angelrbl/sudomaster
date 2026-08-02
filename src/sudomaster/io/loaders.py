@@ -24,4 +24,8 @@ class CSVDataLoader(DataLoader):
 
         with open(filepath, mode="r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
-            return [dict(row) for row in reader]
+            data = [dict(row) for row in reader]
+            if len(data) > 1:
+                return data
+            else:
+                return data[0]

@@ -28,6 +28,9 @@ class CSVExporter(Exporter):
             filepath.touch()
             return
 
+        if type(data) != list:
+            data = [data]
+
         fieldnames = list(data[0].keys())
 
         with open(filepath, mode="w", newline="", encoding='utf-8') as f:
