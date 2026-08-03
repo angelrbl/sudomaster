@@ -37,3 +37,17 @@ class CSVExporter(Exporter):
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(data)
+
+class TXTExporter(Exporter):
+    def export(self, data: dict[str, Any] | list[dict[str, Any]], filepath: str | Path) -> None:
+        filepath = Path(filepath)
+        
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+
+        if not data:
+            filepath.touch()
+            return
+
+        with open(filepath, "w", encoding='utf-8') as f:
+            content = "\n".join(f"{key}: {value}" for key, value in data.items())
+            f.write(content)
